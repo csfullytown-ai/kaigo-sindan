@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>介護補助金セルフ診断｜うちの親はいくら取りこぼしてる？</title>
+<title>介護で使える制度のセルフ診断｜うちの親は今いくら取りこぼしてる？</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap');
 
@@ -29,6 +29,8 @@
     background: #F7F5F0;
     color: var(--dark);
     min-height: 100vh;
+    font-size: 17px;
+    line-height: 1.8;
   }
 
   /* ── ヘッダー ── */
@@ -59,29 +61,51 @@
     display: inline-block;
     background: rgba(255,255,255,0.15);
     color: #CCE8E8;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 500;
     letter-spacing: 0.1em;
-    padding: 4px 14px;
+    padding: 6px 18px;
     border-radius: 20px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
   .hero h1 {
     font-family: 'Noto Serif JP', serif;
-    font-size: clamp(22px, 5vw, 30px);
+    font-size: clamp(26px, 6vw, 34px);
     color: #FFFFFF;
     line-height: 1.5;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     position: relative;
     z-index: 1;
   }
   .hero h1 span { color: #F0C060; }
-  .hero p {
-    color: #AADDDD;
-    font-size: 13px;
-    line-height: 1.8;
+  .hero-sub {
+    font-family: 'Noto Serif JP', serif;
+    color: #F0C060 !important;
+    font-size: 18px !important;
+    font-weight: 700;
+    line-height: 1.5 !important;
+    margin-bottom: 14px !important;
     position: relative;
     z-index: 1;
+  }
+  .hero-desc,
+  .hero p {
+    color: #AADDDD;
+    font-size: 15px;
+    line-height: 1.9;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-illust {
+    max-width: 280px;
+    margin: 0 auto 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-illust svg {
+    width: 100%;
+    height: auto;
+    display: block;
   }
   .progress-wrap {
     margin: 28px auto 0;
@@ -92,14 +116,14 @@
   .progress-label {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 13px;
     color: #AADDDD;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
   .progress-bar {
-    height: 4px;
+    height: 6px;
     background: rgba(255,255,255,0.2);
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
   }
   .progress-fill {
@@ -137,45 +161,45 @@
     box-shadow: 0 2px 16px rgba(0,0,0,0.06);
   }
   .step-num {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--teal);
     letter-spacing: 0.12em;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
   .step-q {
     font-family: 'Noto Serif JP', serif;
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
-    line-height: 1.55;
+    line-height: 1.6;
     color: var(--dark);
-    margin-bottom: 6px;
+    margin-bottom: 10px;
   }
   .step-sub {
-    font-size: 12px;
+    font-size: 15px;
     color: var(--gray);
-    line-height: 1.7;
-    margin-bottom: 20px;
+    line-height: 1.8;
+    margin-bottom: 24px;
   }
 
   /* ── 選択肢ボタン ── */
-  .options { display: flex; flex-direction: column; gap: 10px; }
+  .options { display: flex; flex-direction: column; gap: 12px; }
   .option-btn {
     width: 100%;
-    padding: 14px 18px;
-    border: 1.5px solid #E5E5E5;
-    border-radius: 10px;
+    padding: 18px 20px;
+    border: 2px solid #E5E5E5;
+    border-radius: 12px;
     background: #FAFAFA;
     cursor: pointer;
     text-align: left;
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 14px;
+    font-size: 17px;
     color: var(--dark);
     transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 12px;
-    line-height: 1.5;
+    gap: 14px;
+    line-height: 1.6;
   }
   .option-btn:hover {
     border-color: var(--teal);
@@ -188,37 +212,39 @@
     font-weight: 500;
   }
   .option-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
+    width: 40px; height: 40px;
+    border-radius: 10px;
     background: #EEEEEE;
     display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
+    font-size: 20px;
     flex-shrink: 0;
     transition: background 0.2s;
   }
   .option-btn.selected .option-icon { background: rgba(45,106,106,0.15); }
-  .option-btn-label { flex: 1; }
+  .option-btn-label { flex: 1; font-weight: 600; }
   .option-btn-sub {
-    font-size: 11px;
+    display: block;
+    font-size: 14px;
     color: var(--gray);
-    margin-top: 2px;
+    margin-top: 4px;
     font-weight: 400;
+    line-height: 1.6;
   }
 
   /* ── ナビボタン ── */
   .nav-row {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 12px;
+    margin-top: 24px;
   }
   .btn-back {
     flex: 0 0 auto;
-    padding: 14px 20px;
-    border: 1.5px solid #DDDDDD;
-    border-radius: 10px;
+    padding: 16px 22px;
+    border: 2px solid #DDDDDD;
+    border-radius: 12px;
     background: transparent;
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     color: var(--gray);
     cursor: pointer;
     transition: all 0.2s;
@@ -226,13 +252,13 @@
   .btn-back:hover { border-color: var(--teal); color: var(--teal); }
   .btn-next {
     flex: 1;
-    padding: 14px;
+    padding: 16px;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     background: var(--teal);
     color: #FFFFFF;
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
@@ -249,30 +275,30 @@
   .result-hero {
     background: linear-gradient(135deg, var(--teal) 0%, #1A4A4A 100%);
     border-radius: 16px;
-    padding: 32px 24px;
+    padding: 36px 24px;
     margin-top: 24px;
     text-align: center;
     color: #FFFFFF;
   }
   .result-label {
-    font-size: 11px;
+    font-size: 14px;
     letter-spacing: 0.12em;
     color: #AADDDD;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
   .result-amount {
     font-family: 'Noto Serif JP', serif;
-    font-size: 48px;
+    font-size: 56px;
     font-weight: 700;
     color: #F0C060;
     line-height: 1.1;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
   }
-  .result-amount span { font-size: 20px; }
+  .result-amount span { font-size: 24px; }
   .result-caption {
-    font-size: 12px;
+    font-size: 15px;
     color: #AADDDD;
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
   .result-seido {
@@ -281,9 +307,9 @@
   .seido-header {
     background: var(--teal);
     color: #FFFFFF;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
-    padding: 10px 16px;
+    padding: 12px 18px;
     border-radius: 8px 8px 0 0;
     letter-spacing: 0.06em;
   }
@@ -292,100 +318,63 @@
     border-left: 3px solid var(--teal);
     border-right: 1px solid #EEEEEE;
     border-bottom: 1px solid #EEEEEE;
-    padding: 14px 16px;
+    padding: 18px 18px;
     display: flex;
     align-items: flex-start;
     gap: 12px;
   }
   .seido-item:last-child { border-radius: 0 0 8px 8px; border-bottom: 1px solid #EEEEEE; }
   .seido-dot {
-    width: 8px; height: 8px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     background: var(--teal);
-    margin-top: 5px;
+    margin-top: 7px;
     flex-shrink: 0;
   }
   .seido-dot.orange { background: var(--orange); }
   .seido-dot.gold { background: var(--gold); }
   .seido-item-body {}
   .seido-name {
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--dark);
-    margin-bottom: 2px;
+    margin-bottom: 4px;
+    line-height: 1.5;
   }
   .seido-desc {
-    font-size: 11px;
+    font-size: 14px;
     color: var(--gray);
-    line-height: 1.6;
+    line-height: 1.7;
   }
   .seido-amount {
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--orange);
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
   .warn-box {
     background: var(--orange-lt);
     border: 1px solid var(--orange);
     border-radius: 10px;
-    padding: 14px 16px;
-    margin-top: 16px;
-    font-size: 12px;
-    line-height: 1.8;
+    padding: 18px 18px;
+    margin-top: 18px;
+    font-size: 14px;
+    line-height: 1.9;
     color: #5A2A00;
   }
-  .warn-box strong { color: var(--orange); }
-
-  .cta-box {
-    background: var(--gold-lt);
-    border: 1px solid var(--gold);
-    border-radius: 10px;
-    padding: 20px 16px;
-    margin-top: 16px;
-    text-align: center;
-  }
-  .cta-title {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--dark);
-    margin-bottom: 6px;
-  }
-  .cta-sub {
-    font-size: 12px;
-    color: var(--gray);
-    line-height: 1.7;
-    margin-bottom: 14px;
-  }
-  .cta-btn {
-    display: inline-block;
-    background: var(--teal);
-    color: #FFFFFF;
-    font-family: 'Noto Sans JP', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 14px 32px;
-    border-radius: 10px;
-    text-decoration: none;
-    cursor: pointer;
-    border: none;
-    width: 100%;
-    transition: background 0.2s;
-  }
-  .cta-btn:hover { background: var(--teal-mid); }
+  .warn-box strong { color: var(--orange); font-size: 15px; }
 
   .restart-btn {
     display: block;
     width: 100%;
-    margin-top: 12px;
-    padding: 12px;
-    border: 1.5px solid #DDDDDD;
-    border-radius: 10px;
+    margin-top: 20px;
+    padding: 16px;
+    border: 2px solid #DDDDDD;
+    border-radius: 12px;
     background: transparent;
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 13px;
+    font-size: 16px;
     color: var(--gray);
     cursor: pointer;
     transition: all 0.2s;
@@ -394,10 +383,10 @@
   .restart-btn:hover { border-color: var(--teal); color: var(--teal); }
 
   .note-text {
-    font-size: 10px;
+    font-size: 12px;
     color: #AAAAAA;
-    line-height: 1.7;
-    margin-top: 20px;
+    line-height: 1.8;
+    margin-top: 24px;
     text-align: center;
     padding: 0 8px;
   }
@@ -406,23 +395,83 @@
     display: inline-block;
     background: #FFF0F0;
     color: var(--warn);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 3px 10px;
     border-radius: 4px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <div class="hero-badge">介護補助金セルフ診断</div>
-  <h1>うちの親は今<span>いくら</span><br>取りこぼしてる？</h1>
-  <p>要介護度・収入・状況を答えるだけで<br>使える制度と戻ってくる金額の目安がわかります</p>
+  <div class="hero-illust">
+    <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- 背景の温かみのある円 -->
+      <circle cx="60" cy="70" r="42" fill="#F0C060" opacity="0.18"/>
+      <circle cx="240" cy="60" r="36" fill="#FFE8B3" opacity="0.22"/>
+      <circle cx="160" cy="110" r="28" fill="#FFFFFF" opacity="0.10"/>
+
+      <!-- ふんわりとした手書き風の家のシルエット（左） -->
+      <g stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.92">
+        <path d="M 38 85 L 38 65 L 62 48 L 86 65 L 86 85 Z"/>
+        <path d="M 50 85 L 50 72 L 60 72 L 60 85"/>
+        <path d="M 70 70 L 78 70"/>
+      </g>
+
+      <!-- 手をつなぐ親子（中央） 親（左・小柄）と子（右・少し大きい） -->
+      <g stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 親（おじいちゃん/おばあちゃん）-->
+        <circle cx="142" cy="58" r="9" fill="#FFFFFF" opacity="0.95"/>
+        <!-- 髪の毛のふんわりライン -->
+        <path d="M 134 54 Q 142 49 150 54" stroke="#2D6A6A" stroke-width="1.6" opacity="0.6"/>
+        <!-- 体 -->
+        <path d="M 142 67 L 142 95 M 142 78 L 130 88 M 142 78 L 154 84" stroke="#FFFFFF"/>
+        <!-- 杖 -->
+        <path d="M 130 88 L 128 108" stroke="#F0C060" stroke-width="2.2"/>
+        <path d="M 128 88 L 132 88" stroke="#F0C060" stroke-width="2.2"/>
+
+        <!-- 子（家族）-->
+        <circle cx="178" cy="52" r="10" fill="#FFFFFF" opacity="0.95"/>
+        <!-- 体 -->
+        <path d="M 178 62 L 178 100 M 178 74 L 166 82 M 178 74 L 190 80" stroke="#FFFFFF"/>
+
+        <!-- 手をつなぐライン -->
+        <path d="M 154 84 Q 160 80 166 82" stroke="#F0C060" stroke-width="2.6" opacity="0.95"/>
+      </g>
+
+      <!-- ハートマーク（親子の間に） -->
+      <g fill="#F0C060" opacity="0.9">
+        <path d="M 158 70 Q 154 66 156 62 Q 160 60 160 64 Q 160 60 164 62 Q 166 66 162 70 Z"/>
+      </g>
+
+      <!-- 右側：書類と硬貨（補助金のイメージ） -->
+      <g stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+        <!-- 書類 -->
+        <path d="M 232 62 L 232 96 L 268 96 L 268 70 L 260 62 Z" fill="rgba(255,255,255,0.12)"/>
+        <path d="M 260 62 L 260 70 L 268 70"/>
+        <path d="M 240 78 L 260 78 M 240 84 L 258 84 M 240 90 L 254 90"/>
+      </g>
+
+      <!-- きらきら（手書き風の星） -->
+      <g stroke="#F0C060" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.9">
+        <path d="M 100 30 L 100 38 M 96 34 L 104 34"/>
+        <path d="M 210 28 L 210 34 M 207 31 L 213 31"/>
+        <path d="M 280 100 L 280 106 M 277 103 L 283 103"/>
+      </g>
+
+      <!-- やわらかい波線（地面） -->
+      <path d="M 20 120 Q 80 116 160 120 T 300 120" stroke="#FFFFFF" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5" stroke-dasharray="2 4"/>
+    </svg>
+  </div>
+  <div class="hero-badge">セルフ診断</div>
+  <h1>介護で使える<br>制度の<span>セルフ診断</span></h1>
+  <p class="hero-sub">うちの親は今いくら取りこぼしてる？</p>
+  <p class="hero-desc">要介護度・収入・状況を答えるだけで<br>使える制度と戻ってくる金額の目安がわかります</p>
   <div class="progress-wrap">
     <div class="progress-label">
-      <span id="step-label">STEP 1 / 5</span>
+      <span id="step-label">STEP 1 / 8</span>
       <span id="step-pct">0%</span>
     </div>
     <div class="progress-bar">
@@ -436,7 +485,7 @@
   <!-- STEP 1: 要介護度 -->
   <div class="step active" id="step-1">
     <div class="step-card">
-      <div class="step-num">STEP 1 ／ 5</div>
+      <div class="step-num">STEP 1 ／ 8</div>
       <div class="step-q">親の要介護度を教えてください</div>
       <div class="step-sub">まだ認定を受けていない場合は「未申請」を選択してください</div>
       <div class="options">
@@ -466,7 +515,7 @@
   <!-- STEP 2: 収入区分 -->
   <div class="step" id="step-2">
     <div class="step-card">
-      <div class="step-num">STEP 2 ／ 5</div>
+      <div class="step-num">STEP 2 ／ 8</div>
       <div class="step-q">親の年収・年金額の目安を教えてください</div>
       <div class="step-sub">世帯収入によって自己負担の上限額が変わります</div>
       <div class="options">
@@ -497,7 +546,7 @@
   <!-- STEP 3: 在宅 or 施設 -->
   <div class="step" id="step-3">
     <div class="step-card">
-      <div class="step-num">STEP 3 ／ 5</div>
+      <div class="step-num">STEP 3 ／ 8</div>
       <div class="step-q">介護の状況を教えてください</div>
       <div class="step-sub">在宅か施設かによって使える制度が変わります</div>
       <div class="options">
@@ -528,7 +577,7 @@
   <!-- STEP 4: 医療費 -->
   <div class="step" id="step-4">
     <div class="step-card">
-      <div class="step-num">STEP 4 ／ 5</div>
+      <div class="step-num">STEP 4 ／ 8</div>
       <div class="step-q">月々の医療費はどのくらいですか？</div>
       <div class="step-sub">介護費と医療費を合算して計算できる制度があります</div>
       <div class="options">
@@ -552,10 +601,103 @@
     </div>
   </div>
 
-  <!-- STEP 5: 申請状況 -->
+  <!-- STEP 5: 同居・世帯状況（新規） -->
   <div class="step" id="step-5">
     <div class="step-card">
-      <div class="step-num">STEP 5 ／ 5</div>
+      <div class="step-num">STEP 5 ／ 8</div>
+      <div class="step-q">親と同じ世帯ですか？（住民票）</div>
+      <div class="step-sub">世帯分離をすると、施設費や自己負担上限が下がる可能性があります</div>
+      <div class="options">
+        <button class="option-btn" data-step="5" data-val="separate" onclick="select(this)">
+          <span class="option-icon">🏘️</span>
+          <span class="option-btn-label">別世帯（住民票が別）<span class="option-btn-sub">親が単独世帯または夫婦のみの世帯</span></span>
+        </button>
+        <button class="option-btn" data-step="5" data-val="same-low" onclick="select(this)">
+          <span class="option-icon">👨‍👩‍👧</span>
+          <span class="option-btn-label">同世帯・家族の収入は多くない<span class="option-btn-sub">同居家族も住民税非課税に近い</span></span>
+        </button>
+        <button class="option-btn" data-step="5" data-val="same-high" onclick="select(this)">
+          <span class="option-icon">👔</span>
+          <span class="option-btn-label">同世帯・家族に現役世代がいる<span class="option-btn-sub">同居家族の収入で上限額が上がっている可能性</span></span>
+        </button>
+        <button class="option-btn" data-step="5" data-val="unknown" onclick="select(this)">
+          <span class="option-icon">❓</span>
+          <span class="option-btn-label">よくわからない<span class="option-btn-sub">確認が必要な状態</span></span>
+        </button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(4)">← 戻る</button>
+        <button class="btn-next" id="next-5" onclick="goNext(6)">次へ　→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: 住宅改修・福祉用具（新規） -->
+  <div class="step" id="step-6">
+    <div class="step-card">
+      <div class="step-num">STEP 6 ／ 8</div>
+      <div class="step-q">住宅改修や福祉用具の予定はありますか？</div>
+      <div class="step-sub">手すり設置や段差解消などは介護保険から最大20万円が支給されます</div>
+      <div class="options">
+        <button class="option-btn" data-step="6" data-val="planning" onclick="select(this)">
+          <span class="option-icon">🛠️</span>
+          <span class="option-btn-label">これから検討したい<span class="option-btn-sub">手すり・段差解消・滑り止めなど</span></span>
+        </button>
+        <button class="option-btn" data-step="6" data-val="needed" onclick="select(this)">
+          <span class="option-icon">🦽</span>
+          <span class="option-btn-label">福祉用具が必要だが未購入<span class="option-btn-sub">入浴・排泄関連の用具など</span></span>
+        </button>
+        <button class="option-btn" data-step="6" data-val="done" onclick="select(this)">
+          <span class="option-icon">✅</span>
+          <span class="option-btn-label">すでに利用・申請済み<span class="option-btn-sub">支給を受けている</span></span>
+        </button>
+        <button class="option-btn" data-step="6" data-val="no-need" onclick="select(this)">
+          <span class="option-icon">🚫</span>
+          <span class="option-btn-label">予定なし・必要ない<span class="option-btn-sub">現状の住環境で問題ない</span></span>
+        </button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(5)">← 戻る</button>
+        <button class="btn-next" id="next-6" onclick="goNext(7)">次へ　→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7: 確定申告・医療費控除（新規） -->
+  <div class="step" id="step-7">
+    <div class="step-card">
+      <div class="step-num">STEP 7 ／ 8</div>
+      <div class="step-q">確定申告で医療費控除をしていますか？</div>
+      <div class="step-sub">介護費用の一部・おむつ代・通院交通費なども医療費控除の対象になります</div>
+      <div class="options">
+        <button class="option-btn" data-step="7" data-val="not-yet" onclick="select(this)">
+          <span class="option-icon">📝</span>
+          <span class="option-btn-label">していない<span class="option-btn-sub">控除のしくみを知らなかった</span></span>
+        </button>
+        <button class="option-btn" data-step="7" data-val="medical-only" onclick="select(this)">
+          <span class="option-icon">💉</span>
+          <span class="option-btn-label">医療費のみ計上している<span class="option-btn-sub">介護費用やおむつ代は含めていない</span></span>
+        </button>
+        <button class="option-btn" data-step="7" data-val="full" onclick="select(this)">
+          <span class="option-icon">📊</span>
+          <span class="option-btn-label">介護費用も含めて申告済み<span class="option-btn-sub">おむつ代・通院費なども計上</span></span>
+        </button>
+        <button class="option-btn" data-step="7" data-val="below" onclick="select(this)">
+          <span class="option-icon">💰</span>
+          <span class="option-btn-label">所得が少なく申告対象外<span class="option-btn-sub">そもそも所得税がかかっていない</span></span>
+        </button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goBack(6)">← 戻る</button>
+        <button class="btn-next" id="next-7" onclick="goNext(8)">次へ　→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8: 申請状況 -->
+  <div class="step" id="step-8">
+    <div class="step-card">
+      <div class="step-num">STEP 8 ／ 8</div>
       <div class="step-q">すでに申請・利用している制度はありますか？</div>
       <div class="step-sub">当てはまるものをすべて選んでください（複数選択可）</div>
       <div class="options" id="multi-options">
@@ -581,8 +723,8 @@
         </button>
       </div>
       <div class="nav-row">
-        <button class="btn-back" onclick="goBack(4)">← 戻る</button>
-        <button class="btn-next enabled" id="next-5" onclick="showResult()">診断結果を見る　→</button>
+        <button class="btn-back" onclick="goBack(7)">← 戻る</button>
+        <button class="btn-next enabled" id="next-8" onclick="showResult()">診断結果を見る　→</button>
       </div>
     </div>
   </div>
@@ -596,11 +738,6 @@
     </div>
     <div class="result-seido" id="result-seido"></div>
     <div class="warn-box" id="result-warn"></div>
-    <div class="cta-box">
-      <div class="cta-title">詳しい申請方法が気になりますか？</div>
-      <div class="cta-sub">プロフィールのリンクから<br>「聞く順番ガイド」を無料でダウンロードできます。<br>窓口でそのまま使えるテンプレート付きです。</div>
-      <button class="cta-btn">📄 無料ガイドをダウンロードする</button>
-    </div>
     <button class="restart-btn" onclick="restart()">🔄 もう一度診断する</button>
     <div class="note-text">※この診断は目安です。実際の金額・対象条件は世帯状況や自治体によって異なります。詳細は市区町村・税務署・加入医療保険者にご確認ください。</div>
   </div>
@@ -608,7 +745,7 @@
 </div>
 
 <script>
-  const answers = { 1: null, 2: null, 3: null, 4: null };
+  const answers = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null };
   const multiSelected = new Set(['nothing']);
 
   function select(btn) {
@@ -662,7 +799,7 @@
   }
 
   function updateProgress(step) {
-    const total = 5;
+    const total = 8;
     const pct = Math.round(((step - 1) / total) * 100);
     document.getElementById('progress-fill').style.width = pct + '%';
     document.getElementById('step-label').textContent = `STEP ${step} / ${total}`;
@@ -674,6 +811,9 @@
     const income = answers[2];
     const situation = answers[3];
     const medical = answers[4];
+    const household = answers[5];   // 新：世帯状況
+    const housing = answers[6];      // 新：住宅改修
+    const tax = answers[7];          // 新：確定申告
     const applied = multiSelected;
 
     let minAmt = 0;
@@ -765,6 +905,73 @@
       });
     }
 
+    // ── 世帯分離（新） ──
+    if (household === 'same-high' && (kaigo === '1-2' || kaigo === '3-4' || kaigo === '5') && (income === 'low' || income === 'mid')) {
+      minAmt += 8;
+      seidos.push({
+        name: '世帯分離による負担軽減',
+        desc: '住民票を分けることで、親の世帯が住民税非課税扱いになり、施設費・自己負担上限額・後期高齢者保険料などが下がる可能性があります。市区町村窓口で手続き可能です。',
+        amount: '年間 5〜15万円の負担軽減の可能性',
+        dot: 'orange'
+      });
+    } else if (household === 'unknown') {
+      warns.push('<strong>📌 世帯状況の確認をおすすめします</strong><br>住民票の世帯構成によって、自己負担上限額や施設費が大きく変わります。市区町村の窓口で「世帯分離が可能か」を一度相談してみてください。');
+    }
+
+    // ── 施設入所中の補足（食費・居住費の負担軽減） ──
+    if (situation === 'facility' && income === 'low') {
+      minAmt += 12;
+      seidos.push({
+        name: '介護保険負担限度額認定証（施設）',
+        desc: '住民税非課税世帯の方は、施設の食費・居住費が大幅に下がります。年に1回の更新が必要なので未申請なら今すぐ。窓口は介護保険課。',
+        amount: '年間 10〜30万円の軽減の可能性',
+        dot: 'orange',
+        urgent: true
+      });
+    }
+
+    // ── 住宅改修（新） ──
+    if (housing === 'planning' && (kaigo === '1-2' || kaigo === '3-4' || kaigo === '5')) {
+      minAmt += 15;
+      seidos.push({
+        name: '介護保険・住宅改修費（最大20万円）',
+        desc: '手すり設置・段差解消・滑り止め工事などに対し、最大20万円まで支給されます（自己負担1〜3割）。ケアマネジャーに相談して着工前申請が必要です。',
+        amount: '最大18万円の支給（自己負担1割の場合）',
+        dot: 'gold'
+      });
+    }
+
+    // ── 福祉用具購入費（新） ──
+    if (housing === 'needed' && (kaigo === '1-2' || kaigo === '3-4' || kaigo === '5')) {
+      minAmt += 8;
+      seidos.push({
+        name: '特定福祉用具購入費（年10万円まで）',
+        desc: '入浴用いす・ポータブルトイレ・手すりなどの購入費が、年間10万円まで保険適用になります。指定事業者からの購入が条件です。',
+        amount: '年間 7〜9万円の支給の可能性',
+        dot: 'teal'
+      });
+    }
+
+    // ── 確定申告・医療費控除（新） ──
+    if (tax === 'not-yet' && (medical === 'low' || medical === 'high')) {
+      let taxAmt = (medical === 'high') ? 6 : 3;
+      minAmt += taxAmt;
+      seidos.push({
+        name: '確定申告による医療費控除',
+        desc: '年間の医療費が10万円（または所得の5%）を超えれば、所得税・住民税が戻ります。介護費用の一部・通院交通費・おむつ代も対象です。過去5年分まで遡って申告可能。',
+        amount: `年間 ${taxAmt}万円前後の還付・節税`,
+        dot: 'gold'
+      });
+    } else if (tax === 'medical-only' && (kaigo === '1-2' || kaigo === '3-4' || kaigo === '5')) {
+      minAmt += 3;
+      seidos.push({
+        name: '医療費控除に介護費用を追加',
+        desc: '訪問看護・デイケアの医療系サービス費・おむつ代・通院交通費なども医療費控除の対象です。領収書をまとめて再申告すれば追加で還付が受けられます。',
+        amount: '年間 2〜5万円の追加還付の可能性',
+        dot: 'teal'
+      });
+    }
+
     // ── すでに全部申請済み ──
     if (applied.has('kousetsu') && applied.has('gosan') && applied.has('shogai')) {
       minAmt = Math.max(minAmt, 3);
@@ -815,7 +1022,7 @@
     multiSelected.add('nothing');
     document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
     document.querySelector('[data-val="nothing"]').classList.add('selected');
-    document.querySelectorAll('.btn-next:not(#next-5)').forEach(b => b.classList.remove('enabled'));
+    document.querySelectorAll('.btn-next:not(#next-8)').forEach(b => b.classList.remove('enabled'));
     document.querySelector('.step.active').classList.remove('active');
     document.getElementById('step-1').classList.add('active');
     updateProgress(1);
