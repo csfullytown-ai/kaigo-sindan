@@ -4,17 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>介護で使える制度のセルフ診断｜うちの親は今いくら取りこぼしてる？</title>
+<!-- PDF生成ライブラリ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;700&display=swap');
 
   :root {
-    --teal: #2D6A6A;
-    --teal-lt: #E8F4F4;
-    --teal-mid: #4A8A8A;
-    --orange: #C8621A;
+    --teal: #1F4F4F;          /* より深いティール */
+    --teal-lt: #E5EFEF;
+    --teal-mid: #3C6E6E;
+    --teal-dark: #0F3535;     /* さらに深い色（ヘッダー用） */
+    --orange: #B85A18;        /* 落ち着いたオレンジ */
     --orange-lt: #FDF0E8;
-    --gold: #C8962A;
+    --gold: #B8862A;          /* 深いゴールド */
     --gold-lt: #FFFBEE;
+    --gold-bright: #D4A23A;   /* バッジ用の鮮やかなゴールド */
     --dark: #1A1A1A;
     --gray: #666666;
     --gray-lt: #F5F5F5;
@@ -35,11 +40,12 @@
 
   /* ── ヘッダー ── */
   .hero {
-    background: var(--teal);
-    padding: 48px 24px 40px;
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 60%, var(--teal-dark) 100%);
+    padding: 40px 24px 40px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    border-bottom: 3px solid var(--gold-bright);
   }
   .hero::before {
     content: '';
@@ -47,7 +53,7 @@
     top: -60px; right: -60px;
     width: 200px; height: 200px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.05);
+    background: rgba(212, 162, 58, 0.08);
   }
   .hero::after {
     content: '';
@@ -55,18 +61,44 @@
     bottom: -80px; left: -40px;
     width: 240px; height: 240px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.04);
+    background: rgba(212, 162, 58, 0.06);
+  }
+  /* note特典専用バッジ（一番上に表示） */
+  .premium-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+    color: var(--teal-dark);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 7px 18px;
+    border-radius: 4px;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(184, 134, 42, 0.3);
+  }
+  .premium-tag-line {
+    width: 18px;
+    height: 1px;
+    background: var(--teal-dark);
+    opacity: 0.6;
   }
   .hero-badge {
     display: inline-block;
-    background: rgba(255,255,255,0.15);
-    color: #CCE8E8;
-    font-size: 13px;
+    background: rgba(212, 162, 58, 0.18);
+    color: var(--gold-bright);
+    border: 1px solid rgba(212, 162, 58, 0.4);
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: 0.1em;
-    padding: 6px 18px;
+    letter-spacing: 0.12em;
+    padding: 5px 14px;
     border-radius: 20px;
     margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
   }
   .hero h1 {
     font-family: 'Noto Serif JP', serif;
@@ -77,10 +109,10 @@
     position: relative;
     z-index: 1;
   }
-  .hero h1 span { color: #F0C060; }
+  .hero h1 span { color: var(--gold-bright); }
   .hero-sub {
     font-family: 'Noto Serif JP', serif;
-    color: #F0C060 !important;
+    color: var(--gold-bright) !important;
     font-size: 18px !important;
     font-weight: 700;
     line-height: 1.5 !important;
@@ -128,7 +160,7 @@
   }
   .progress-fill {
     height: 100%;
-    background: #F0C060;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
     border-radius: 2px;
     transition: width 0.5s ease;
     width: 0%;
@@ -220,7 +252,7 @@
     flex-shrink: 0;
     transition: background 0.2s;
   }
-  .option-btn.selected .option-icon { background: rgba(45,106,106,0.15); }
+  .option-btn.selected .option-icon { background: rgba(31, 79, 79, 0.15); }
   .option-btn-label { flex: 1; font-weight: 600; }
   .option-btn-sub {
     display: block;
@@ -273,12 +305,14 @@
 
   /* ── 結果画面 ── */
   .result-hero {
-    background: linear-gradient(135deg, var(--teal) 0%, #1A4A4A 100%);
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 60%, var(--teal-dark) 100%);
     border-radius: 16px;
     padding: 36px 24px;
     margin-top: 24px;
     text-align: center;
     color: #FFFFFF;
+    border: 1px solid rgba(212, 162, 58, 0.3);
+    box-shadow: 0 4px 20px rgba(15, 53, 53, 0.15);
   }
   .result-label {
     font-size: 14px;
@@ -290,7 +324,7 @@
     font-family: 'Noto Serif JP', serif;
     font-size: 56px;
     font-weight: 700;
-    color: #F0C060;
+    color: var(--gold-bright);
     line-height: 1.1;
     margin-bottom: 8px;
   }
@@ -401,17 +435,185 @@
     border-radius: 4px;
     margin-bottom: 6px;
   }
+
+  /* ── 聞き取り台本セクション ── */
+  .script-section {
+    margin-top: 24px;
+    background: #FFFFFF;
+    border: 2px solid var(--teal);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .script-header {
+    background: var(--teal);
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px 18px;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+  }
+  .script-intro {
+    padding: 16px 18px;
+    font-size: 14px;
+    color: var(--dark);
+    line-height: 1.9;
+    background: var(--teal-lt);
+    border-bottom: 1px solid #E5E5E5;
+  }
+  .script-intro strong {
+    color: var(--teal);
+    font-weight: 700;
+  }
+
+  /* フェーズボックス */
+  .phase-box {
+    border-bottom: 1px solid #EEEEEE;
+    padding: 18px;
+    background: #FFFFFF;
+  }
+  .phase-box:last-child { border-bottom: none; }
+  .phase-box.hidden { display: none; }
+  .phase-num {
+    display: inline-block;
+    background: var(--gold);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    letter-spacing: 0.06em;
+  }
+  .phase-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 10px;
+    line-height: 1.5;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .phase-why {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.9;
+    margin-bottom: 12px;
+    background: #F8F8F8;
+    padding: 12px 14px;
+    border-radius: 6px;
+  }
+  .phase-why strong {
+    color: var(--orange);
+    font-weight: 700;
+  }
+  .script-box-inner { }
+  .script-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .script-body {
+    background: #FFF8E5;
+    border-left: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-size: 15px;
+    line-height: 1.95;
+    color: var(--dark);
+    white-space: pre-wrap;
+  }
+  .script-body strong {
+    color: var(--orange);
+    font-weight: 700;
+  }
+  .script-body .checklist-item {
+    display: block;
+    padding: 4px 0;
+  }
+
+  /* ── PDFダウンロードボタン ── */
+  .pdf-btn {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 18px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold) 0%, #D4A050 100%);
+    color: #FFFFFF;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(240, 192, 96, 0.35);
+  }
+  .pdf-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(240, 192, 96, 0.45);
+  }
+  .pdf-btn:disabled {
+    opacity: 0.5;
+    cursor: wait;
+    transform: none;
+  }
+  .pdf-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--gray);
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  /* note特典専用クレジット */
+  .premium-credit {
+    margin-top: 28px;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 100%);
+    border: 1px solid rgba(212, 162, 58, 0.4);
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .premium-credit-line {
+    width: 60px;
+    height: 1px;
+    background: var(--gold-bright);
+    margin: 0 auto 12px;
+  }
+  .premium-credit-text {
+    color: var(--gold-bright);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .premium-credit-sub {
+    color: rgba(255,255,255,0.75);
+    font-size: 11px;
+    line-height: 1.7;
+  }
 </style>
 </head>
 <body>
 
 <div class="hero">
+  <!-- note特典専用バッジ -->
+  <div class="premium-tag">
+    <span class="premium-tag-line"></span>
+    <span>note特典専用 ／ 完全版</span>
+    <span class="premium-tag-line"></span>
+  </div>
   <div class="hero-illust">
     <svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <!-- 背景の温かみのある円 -->
-      <circle cx="60" cy="70" r="42" fill="#F0C060" opacity="0.18"/>
-      <circle cx="240" cy="60" r="36" fill="#FFE8B3" opacity="0.22"/>
-      <circle cx="160" cy="110" r="28" fill="#FFFFFF" opacity="0.10"/>
+      <!-- 背景の温かみのある円（ゴールド系で統一） -->
+      <circle cx="60" cy="70" r="42" fill="#D4A23A" opacity="0.15"/>
+      <circle cx="240" cy="60" r="36" fill="#D4A23A" opacity="0.12"/>
+      <circle cx="160" cy="110" r="28" fill="#FFFFFF" opacity="0.08"/>
 
       <!-- ふんわりとした手書き風の家のシルエット（左） -->
       <g stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.92">
@@ -420,52 +622,48 @@
         <path d="M 70 70 L 78 70"/>
       </g>
 
-      <!-- 手をつなぐ親子（中央） 親（左・小柄）と子（右・少し大きい） -->
+      <!-- 手をつなぐ親子（中央） -->
       <g stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <!-- 親（おじいちゃん/おばあちゃん）-->
+        <!-- 親 -->
         <circle cx="142" cy="58" r="9" fill="#FFFFFF" opacity="0.95"/>
-        <!-- 髪の毛のふんわりライン -->
-        <path d="M 134 54 Q 142 49 150 54" stroke="#2D6A6A" stroke-width="1.6" opacity="0.6"/>
-        <!-- 体 -->
+        <path d="M 134 54 Q 142 49 150 54" stroke="#1F4F4F" stroke-width="1.6" opacity="0.6"/>
         <path d="M 142 67 L 142 95 M 142 78 L 130 88 M 142 78 L 154 84" stroke="#FFFFFF"/>
-        <!-- 杖 -->
-        <path d="M 130 88 L 128 108" stroke="#F0C060" stroke-width="2.2"/>
-        <path d="M 128 88 L 132 88" stroke="#F0C060" stroke-width="2.2"/>
+        <!-- 杖（ゴールド） -->
+        <path d="M 130 88 L 128 108" stroke="#D4A23A" stroke-width="2.2"/>
+        <path d="M 128 88 L 132 88" stroke="#D4A23A" stroke-width="2.2"/>
 
-        <!-- 子（家族）-->
+        <!-- 子（家族） -->
         <circle cx="178" cy="52" r="10" fill="#FFFFFF" opacity="0.95"/>
-        <!-- 体 -->
         <path d="M 178 62 L 178 100 M 178 74 L 166 82 M 178 74 L 190 80" stroke="#FFFFFF"/>
 
-        <!-- 手をつなぐライン -->
-        <path d="M 154 84 Q 160 80 166 82" stroke="#F0C060" stroke-width="2.6" opacity="0.95"/>
+        <!-- 手をつなぐライン（ゴールド） -->
+        <path d="M 154 84 Q 160 80 166 82" stroke="#D4A23A" stroke-width="2.6" opacity="0.95"/>
       </g>
 
-      <!-- ハートマーク（親子の間に） -->
-      <g fill="#F0C060" opacity="0.9">
+      <!-- ハートマーク（ゴールド） -->
+      <g fill="#D4A23A" opacity="0.9">
         <path d="M 158 70 Q 154 66 156 62 Q 160 60 160 64 Q 160 60 164 62 Q 166 66 162 70 Z"/>
       </g>
 
-      <!-- 右側：書類と硬貨（補助金のイメージ） -->
+      <!-- 右側：書類 -->
       <g stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
-        <!-- 書類 -->
         <path d="M 232 62 L 232 96 L 268 96 L 268 70 L 260 62 Z" fill="rgba(255,255,255,0.12)"/>
         <path d="M 260 62 L 260 70 L 268 70"/>
         <path d="M 240 78 L 260 78 M 240 84 L 258 84 M 240 90 L 254 90"/>
       </g>
 
-      <!-- きらきら（手書き風の星） -->
-      <g stroke="#F0C060" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.9">
+      <!-- きらきら -->
+      <g stroke="#D4A23A" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="1">
         <path d="M 100 30 L 100 38 M 96 34 L 104 34"/>
         <path d="M 210 28 L 210 34 M 207 31 L 213 31"/>
         <path d="M 280 100 L 280 106 M 277 103 L 283 103"/>
       </g>
 
-      <!-- やわらかい波線（地面） -->
+      <!-- 地面 -->
       <path d="M 20 120 Q 80 116 160 120 T 300 120" stroke="#FFFFFF" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5" stroke-dasharray="2 4"/>
     </svg>
   </div>
-  <div class="hero-badge">セルフ診断</div>
+  <div class="hero-badge">✦ 介護で使える制度のセルフ診断 ✦</div>
   <h1>介護で使える<br>制度の<span>セルフ診断</span></h1>
   <p class="hero-sub">うちの親は今いくら取りこぼしてる？</p>
   <p class="hero-desc">要介護度・収入・状況を答えるだけで<br>使える制度と戻ってくる金額の目安がわかります</p>
@@ -738,8 +936,118 @@
     </div>
     <div class="result-seido" id="result-seido"></div>
     <div class="warn-box" id="result-warn"></div>
+
+    <!-- 窓口で使える聞き取り台本 -->
+    <div class="script-section" id="script-section">
+      <div class="script-header">📞 「どこに、どの順番で、何を聞くか」窓口めぐりガイド</div>
+      <div class="script-intro">
+        制度を全部覚える必要はありません。<br>
+        大事なのは <strong>「どこに、どの順番で、何を聞くか」</strong> です。<br>
+        以下の順番で回ると、何度も役所に通わずに済みます。
+      </div>
+
+      <!-- フェーズ1: 地域包括支援センター -->
+      <div class="phase-box">
+        <div class="phase-num">STEP 1</div>
+        <div class="phase-title">🏛️ 地域包括支援センターで「全体の整理」をしてもらう</div>
+        <div class="phase-why">
+          いきなり役所の窓口を回ると、話が「介護保険サービスの範囲」に閉じやすくなります。<br>
+          まずここで、親の状態と家族の困りごとを整理してもらいましょう。
+        </div>
+        <div class="script-box-inner">
+          <div class="script-label">▼ 短い版（パッと言える）</div>
+          <div class="script-body" id="script-phase1-short"></div>
+          <div class="script-label" style="margin-top:14px;">▼ 詳しい版（じっくり相談する時）</div>
+          <div class="script-body" id="script-phase1-long"></div>
+        </div>
+      </div>
+
+      <!-- フェーズ2: 介護保険課 -->
+      <div class="phase-box" id="phase-2-box">
+        <div class="phase-num">STEP 2</div>
+        <div class="phase-title">🏢 市区町村の介護保険担当窓口</div>
+        <div class="phase-why" id="phase-2-why"></div>
+        <div class="script-box-inner">
+          <div class="script-label">▼ 短い版</div>
+          <div class="script-body" id="script-phase2-short"></div>
+          <div class="script-label" style="margin-top:14px;">▼ 詳しい版</div>
+          <div class="script-body" id="script-phase2-long"></div>
+        </div>
+      </div>
+
+      <!-- フェーズ3: 高齢福祉課・福祉課 -->
+      <div class="phase-box">
+        <div class="phase-num">STEP 3</div>
+        <div class="phase-title">🏘️ 高齢福祉課・福祉課（自治体独自の助成）</div>
+        <div class="phase-why">
+          紙おむつ支給・配食・見守り・移送・緊急通報装置・家族介護者支援など、自治体独自の制度がある場合があります。ここは自治体差が大きいので、<strong>制度名を言う前にまとめて聞く</strong>のがコツです。
+        </div>
+        <div class="script-box-inner">
+          <div class="script-label">▼ 短い版</div>
+          <div class="script-body" id="script-phase3-short"></div>
+          <div class="script-label" style="margin-top:14px;">▼ 詳しい版</div>
+          <div class="script-body" id="script-phase3-long"></div>
+        </div>
+      </div>
+
+      <!-- フェーズ4: 医療保険の窓口 -->
+      <div class="phase-box" id="phase-4-box">
+        <div class="phase-num">STEP 4</div>
+        <div class="phase-title">🏥 加入している医療保険の窓口</div>
+        <div class="phase-why" id="phase-4-why"></div>
+        <div class="script-box-inner">
+          <div class="script-label">▼ 短い版</div>
+          <div class="script-body" id="script-phase4-short"></div>
+          <div class="script-label" style="margin-top:14px;">▼ 詳しい版</div>
+          <div class="script-body" id="script-phase4-long"></div>
+        </div>
+      </div>
+
+      <!-- フェーズ5: 税務課・税務署 -->
+      <div class="phase-box" id="phase-5-box">
+        <div class="phase-num">STEP 5</div>
+        <div class="phase-title">📊 税務課・税務署（控除関連）</div>
+        <div class="phase-why" id="phase-5-why"></div>
+        <div class="script-box-inner">
+          <div class="script-label">▼ 短い版</div>
+          <div class="script-body" id="script-phase5-short"></div>
+          <div class="script-label" style="margin-top:14px;">▼ 詳しい版</div>
+          <div class="script-body" id="script-phase5-long"></div>
+        </div>
+      </div>
+
+      <!-- 持ち物 -->
+      <div class="phase-box">
+        <div class="phase-num">📋</div>
+        <div class="phase-title">役所めぐりの持ち物チェックリスト</div>
+        <div class="phase-why">全部そろっていなくても相談はできます。ただ、何に困っているか整理されているだけで、会話の進み方が変わります。</div>
+        <div class="script-box-inner">
+          <div class="script-body" id="script-checklist"></div>
+        </div>
+      </div>
+
+      <!-- 家族LINE共有 -->
+      <div class="phase-box">
+        <div class="phase-num">💬</div>
+        <div class="phase-title">家族LINEに送る共有文（コピペOK）</div>
+        <div class="phase-why">兄弟姉妹や配偶者に状況を共有するときに、そのまま使えます。</div>
+        <div class="script-box-inner">
+          <div class="script-body" id="script-family"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PDFダウンロードボタン -->
+    <button class="pdf-btn" id="pdf-btn" onclick="downloadPDF()">📄 診断結果と聞き取り台本をPDFで保存</button>
+    <div class="pdf-note">※印刷して、役所の窓口にこのまま持参できます。</div>
+
     <button class="restart-btn" onclick="restart()">🔄 もう一度診断する</button>
     <div class="note-text">※この診断は目安です。実際の金額・対象条件は世帯状況や自治体によって異なります。詳細は市区町村・税務署・加入医療保険者にご確認ください。</div>
+    <div class="premium-credit">
+      <div class="premium-credit-line"></div>
+      <div class="premium-credit-text">✦ note特典専用 ／ 完全版 ✦</div>
+      <div class="premium-credit-sub">本診断ツールは、有料note『役所に3回行っても「また来てください」と言われた私が、1回で終わらせた方法』ご購入者様限定の特典です。</div>
+    </div>
   </div>
 
 </div>
@@ -862,7 +1170,7 @@
       minAmt += goAmt;
       seidos.push({
         name: '高額医療・高額介護合算療養費',
-        desc: '医療費と介護費を1年分まとめて計算し直す制度。窓口は「国保年金課」です（介護保険課ではありません）。',
+        desc: '医療費と介護費を1年分まとめて計算し直す制度。窓口は自治体によって名称が異なるため、市区町村の総合案内で「医療保険と介護保険の合算の相談窓口」を確認してください。',
         amount: `年間 ${goAmt}万円以上戻る可能性`,
         dot: 'orange'
       });
@@ -876,7 +1184,7 @@
       minAmt += shogaiAmt;
       seidos.push({
         name: '障害者控除対象者認定書',
-        desc: '要介護認定があれば身体障害者手帳なしで所得税・住民税の障害者控除が受けられます。申請先は「高齢福祉課」。',
+        desc: '要介護認定があれば身体障害者手帳なしで所得税・住民税の障害者控除が受けられる場合があります。市町村長等の認定を受ける必要があり、申請窓口は自治体によって異なります。',
         amount: `年間 ${shogaiAmt}万円前後の節税効果`,
         dot: 'gold'
       });
@@ -887,7 +1195,7 @@
       minAmt += 2;
       seidos.push({
         name: 'おむつ使用証明書 × 医療費控除',
-        desc: '主治医に証明書を書いてもらうだけでおむつ代が医療費控除の対象になります。介護窓口では案内されない税務署側の制度です。',
+        desc: '寝たきりなどで紙おむつが必要な場合、医師による「おむつ使用証明書」によって、おむつ代が医療費控除の対象になる場合があります。主治医意見書や市区町村の確認書で代用できることもあるため、税務署で確認を。',
         amount: '年間 1〜3万円の節税効果',
         dot: 'teal'
       });
@@ -895,10 +1203,10 @@
 
     // ── 入院直後 ──
     if (situation === 'hospital') {
-      warns.push('<strong>⚠ 入院中の方は今すぐ動いてください</strong><br>「限度額適用認定証」を申請することで、窓口支払いを自己負担上限額に抑えられます。月をまたぐ前に申請することが重要です。');
+      warns.push('<strong>⚠ 入院中の方は今すぐ動いてください</strong><br>マイナ保険証を利用すれば、限度額適用認定証がなくても、公的医療保険が適用される診療については限度額を超える分の支払いが不要になる場合があります。マイナ保険証を使わない場合は「限度額適用認定証」の申請を。');
       seidos.unshift({
         name: '限度額適用認定証（入院直後に必須）',
-        desc: '入院中に申請することで窓口支払いを上限額に抑えられます。月末入院ほど急いで申請を。国保は市区町村、社保は勤務先健保へ。',
+        desc: 'マイナ保険証を利用すれば認定証なしでも限度額適用ができる場合があります。マイナ保険証を使わない場合や医療機関側の対応によっては認定証が必要。申請先は加入している医療保険（国保なら市区町村、社保なら勤務先健保）。',
         amount: '数十万円の立替が不要になるケースも',
         dot: 'orange',
         urgent: true
@@ -910,7 +1218,7 @@
       minAmt += 8;
       seidos.push({
         name: '世帯分離による負担軽減',
-        desc: '住民票を分けることで、親の世帯が住民税非課税扱いになり、施設費・自己負担上限額・後期高齢者保険料などが下がる可能性があります。市区町村窓口で手続き可能です。',
+        desc: '住民票を分けることで、親の世帯が住民税非課税扱いになり、施設費・自己負担上限額・後期高齢者保険料などが下がる可能性があります。市区町村の住民課などで手続きできますが、まず地域包括支援センターでの相談をおすすめします。',
         amount: '年間 5〜15万円の負担軽減の可能性',
         dot: 'orange'
       });
@@ -923,7 +1231,7 @@
       minAmt += 12;
       seidos.push({
         name: '介護保険負担限度額認定証（施設）',
-        desc: '住民税非課税世帯の方は、施設の食費・居住費が大幅に下がります。年に1回の更新が必要なので未申請なら今すぐ。窓口は介護保険課。',
+        desc: '住民税非課税世帯の方は、施設の食費・居住費が大幅に下がる場合があります。年に1回の更新が必要なので未申請なら早めに。市区町村の介護保険担当窓口で確認を。',
         amount: '年間 10〜30万円の軽減の可能性',
         dot: 'orange',
         urgent: true
@@ -1004,8 +1312,63 @@
     // 注意書き
     let warnHTML = warns.length > 0
       ? warns.join('<br><br>')
-      : '<strong>📌 申請のコツ</strong><br>制度ごとに担当窓口が異なります。「介護保険課に行けば全部わかる」は誤解です。まず「地域包括支援センター」で一覧の棚卸しを依頼するのが最短ルートです。';
+      : '<strong>📌 大事なこと：制度を全部覚えなくていい</strong><br>大事なのは「<strong>どこに、どの順番で、何を聞くか</strong>」です。最初に行くべきは介護保険課ではありません。まず<strong>地域包括支援センター</strong>で全体の交通整理をしてもらってから、必要な窓口へ行くのが最短ルートです。';
     document.getElementById('result-warn').innerHTML = warnHTML;
+
+    // ── 聞き取り台本の生成 ──
+    const scripts = generateScripts(kaigo, income, situation, medical, household, housing, tax, applied, seidos);
+
+    // フェーズ1: 地域包括支援センター（必ず表示）
+    document.getElementById('script-phase1-short').innerHTML = scripts.phase1.short;
+    document.getElementById('script-phase1-long').innerHTML = scripts.phase1.long;
+
+    // フェーズ2: 介護保険課
+    if (scripts.phase2.show) {
+      document.getElementById('phase-2-box').classList.remove('hidden');
+      document.getElementById('phase-2-why').innerHTML = scripts.phase2.why;
+      document.getElementById('script-phase2-short').innerHTML = scripts.phase2.short;
+      document.getElementById('script-phase2-long').innerHTML = scripts.phase2.long;
+    } else {
+      document.getElementById('phase-2-box').classList.add('hidden');
+    }
+
+    // フェーズ3: 高齢福祉課（必ず表示）
+    document.getElementById('script-phase3-short').innerHTML = scripts.phase3.short;
+    document.getElementById('script-phase3-long').innerHTML = scripts.phase3.long;
+
+    // フェーズ4: 医療保険
+    if (scripts.phase4.show) {
+      document.getElementById('phase-4-box').classList.remove('hidden');
+      document.getElementById('phase-4-why').innerHTML = scripts.phase4.why;
+      document.getElementById('script-phase4-short').innerHTML = scripts.phase4.short;
+      document.getElementById('script-phase4-long').innerHTML = scripts.phase4.long;
+    } else {
+      document.getElementById('phase-4-box').classList.add('hidden');
+    }
+
+    // フェーズ5: 税務署
+    if (scripts.phase5.show) {
+      document.getElementById('phase-5-box').classList.remove('hidden');
+      document.getElementById('phase-5-why').innerHTML = scripts.phase5.why;
+      document.getElementById('script-phase5-short').innerHTML = scripts.phase5.short;
+      document.getElementById('script-phase5-long').innerHTML = scripts.phase5.long;
+    } else {
+      document.getElementById('phase-5-box').classList.add('hidden');
+    }
+
+    // 持ち物・家族LINE
+    document.getElementById('script-checklist').innerHTML = scripts.checklist;
+    document.getElementById('script-family').innerHTML = scripts.family;
+
+    // PDF生成用にデータを保持
+    window._diagnosisData = {
+      minAmt: minAmt,
+      seidos: seidos,
+      warns: warns,
+      scripts: scripts,
+      kaigo: kaigo,
+      situation: situation
+    };
 
     // 表示
     document.querySelector('.step.active').classList.remove('active');
@@ -1014,6 +1377,530 @@
     document.getElementById('step-label').textContent = '診断完了';
     document.getElementById('step-pct').textContent = '100%';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── 聞き取り台本の自動生成（5フェーズ式） ──
+  function generateScripts(kaigo, income, situation, medical, household, housing, tax, applied, seidos) {
+    // 親の状況テキスト
+    let parentStatus = '';
+    if (kaigo === 'none') parentStatus = '要介護認定はまだ受けていません';
+    else if (kaigo === '1-2') parentStatus = '要支援1〜2／要介護1〜2です';
+    else if (kaigo === '3-4') parentStatus = '要介護3〜4です';
+    else if (kaigo === '5') parentStatus = '要介護5です';
+
+    let situationText = '';
+    if (situation === 'home') situationText = '在宅で介護しています';
+    else if (situation === 'facility') situationText = '施設に入所しています';
+    else if (situation === 'hospital') situationText = '現在入院中です';
+    else situationText = '自宅で生活しています';
+
+    let incomeText = '';
+    if (income === 'low') incomeText = '住民税非課税世帯';
+    else if (income === 'mid') incomeText = '一般的な所得の世帯';
+    else if (income === 'high') incomeText = '現役並み所得';
+
+    // ===========================================
+    // フェーズ1：地域包括支援センター（最初の整理）
+    // ===========================================
+    const phase1Short = `「親の介護について相談したいです。<strong>介護保険サービスだけでなく、医療費・税金・自治体独自の助成も含めて、家族が確認しておいた方がいい制度を整理したい</strong>のですが、どの窓口に、どの順番で相談すればいいか教えてください。」`;
+
+    let phase1Long = `お世話になります。\n親の介護について相談したいです。\n\n`;
+    phase1Long += `介護保険サービスだけでなく、介護費・医療費・税金・自治体独自の助成など、家族が確認しておいた方がいい制度を整理したいです。\n\n`;
+    phase1Long += `うちの場合、どの窓口に、どの順番で相談すればいいか教えてください。\n\n`;
+    phase1Long += `特に、以下について確認したいです。\n`;
+    phase1Long += `・介護保険サービスの自己負担\n`;
+    phase1Long += `・<strong>高額介護サービス費</strong>\n`;
+    phase1Long += `・<strong>高額医療・高額介護合算療養費</strong>\n`;
+    phase1Long += `・<strong>障害者控除対象者認定書</strong>\n`;
+    phase1Long += `・<strong>紙おむつ代の医療費控除</strong>\n`;
+    phase1Long += `・住宅改修\n`;
+    phase1Long += `・福祉用具\n`;
+    phase1Long += `・自治体独自の介護用品支給や助成\n`;
+    phase1Long += `・家族が使える介護休業制度や相談先`;
+
+    // ===========================================
+    // フェーズ2：介護保険課
+    // ===========================================
+    const phase2Show = (kaigo !== null);
+    let phase2Why = '';
+    let phase2Short = '';
+    let phase2Long = '';
+
+    if (kaigo === 'none') {
+      phase2Why = `親が要介護認定を受けていない場合、まずは認定申請が必要です。申請日から効力が発生するので、早めに動きましょう。`;
+      phase2Short = `「親の<strong>要介護認定</strong>を申請したいので、申請書類と手順を教えてください。あわせて<strong>過去に申請漏れがある制度</strong>がないかも確認したいです。」`;
+      phase2Long = `親の介護サービス費について相談したいです。\n\n`;
+      phase2Long += `親はまだ要介護認定を受けていないので、まず認定申請から始めたいです。\n\n`;
+      phase2Long += `・申請に必要な書類\n`;
+      phase2Long += `・申請の流れ\n`;
+      phase2Long += `・認定が出るまでの期間\n`;
+      phase2Long += `・認定後に使える介護保険サービス\n`;
+      phase2Long += `・自己負担割合\n`;
+      phase2Long += `・<strong>高額介護サービス費</strong>の対象になる可能性\n\n`;
+      phase2Long += `を教えてください。`;
+    } else {
+      phase2Why = `要介護認定を受けている場合、自己負担を軽減できる制度がいくつかあります。「申請が必要か」「自動で案内が来るのか」「過去分の申請漏れがないか」を必ず確認しましょう。`;
+      phase2Short = `「親の介護サービス費について、<strong>高額介護サービス費</strong>の対象になる可能性があるか確認したいです。申請が必要か、過去分の申請漏れがないかも教えてください。」`;
+      phase2Long = `親の介護サービス費について相談したいです。\n\n`;
+      phase2Long += `親の状況：${parentStatus}、${situationText}、${incomeText}。\n\n`;
+      phase2Long += `<strong>高額介護サービス費</strong>の対象になる可能性があるか確認したいです。\n`;
+      phase2Long += `・申請が必要か\n`;
+      phase2Long += `・自動で案内が来るのか\n`;
+      phase2Long += `・過去分の申請漏れがないか\n`;
+      phase2Long += `・今後、自己負担が増えた場合に何を確認すべきか\n\n`;
+      if (housing === 'planning' || housing === 'needed') {
+        phase2Long += `あわせて、<strong>住宅改修費</strong>と<strong>福祉用具購入</strong>についても、対象になる可能性と工事前申請の流れを教えてください。\n\n`;
+      }
+      if (situation === 'facility' && income === 'low') {
+        phase2Long += `また、<strong>負担限度額認定証</strong>（施設の食費・居住費の軽減）の申請が可能か確認したいです。\n\n`;
+      }
+      phase2Long += `を教えてください。`;
+    }
+
+    // ===========================================
+    // フェーズ3：高齢福祉課・福祉課（必ず表示）
+    // ===========================================
+    const phase3Short = `「<strong>国の介護保険制度以外に、この自治体独自で使える高齢者向けの助成や支援制度はありますか？</strong> 親の状態を伝えるので、対象になりそうなものを一覧で確認したいです。」`;
+
+    let phase3Long = `国の介護保険制度以外に、この自治体独自で使える高齢者向けの助成や支援制度はありますか？\n\n`;
+    phase3Long += `親の状況：${parentStatus}\n`;
+    phase3Long += `現在：${situationText}\n`;
+    phase3Long += `世帯：${incomeText}\n\n`;
+    phase3Long += `紙おむつ支給、介護用品助成、配食サービス、見守りサービス、移送サービス、緊急通報装置、家族介護者支援など、対象になる可能性があるものを確認したいです。\n\n`;
+    phase3Long += `また、<strong>障害者控除対象者認定書</strong>の申請窓口がここで合っているかも確認させてください。`;
+
+    // ===========================================
+    // フェーズ4：医療保険の窓口
+    // ===========================================
+    const phase4Show = (medical === 'low' || medical === 'high' || situation === 'hospital');
+    let phase4Why = '';
+    let phase4Short = '';
+    let phase4Long = '';
+
+    if (situation === 'hospital') {
+      phase4Why = `<strong>入院中の方は今すぐ動いてください。</strong> マイナ保険証を使えば限度額適用認定証なしでも限度額適用ができる場合がありますが、医療機関側の対応によって異なります。月をまたぐ前に確認を。`;
+      phase4Short = `「親が入院中です。<strong>高額療養費制度</strong>と<strong>限度額適用</strong>について確認したいです。マイナ保険証で限度額適用ができるか、認定証の申請が必要か教えてください。」`;
+      phase4Long = `親の入院・通院費が高くなりそうです。\n\n`;
+      phase4Long += `<strong>高額療養費制度</strong>や<strong>限度額適用</strong>について確認したいです。\n`;
+      phase4Long += `・マイナ保険証で限度額適用ができるか\n`;
+      phase4Long += `・限度額適用認定証が必要か\n`;
+      phase4Long += `・申請先はどこか\n`;
+      phase4Long += `・食事代や差額ベッド代など対象外の費用は何か\n\n`;
+      phase4Long += `また、医療費と介護費の両方がかかっているので、<strong>高額医療・高額介護合算療養費</strong>の対象になる可能性も確認したいです。`;
+    } else {
+      phase4Why = `医療費と介護費の両方がかかっている場合、<strong>高額医療・高額介護合算療養費</strong>で1年分まとめて計算し直せる場合があります。窓口は自治体・保険によって異なるため、加入している医療保険で確認を。`;
+      phase4Short = `「医療費と介護費の両方がかかっています。<strong>高額医療・高額介護合算療養費</strong>の対象になる可能性があるか確認したいです。」`;
+      phase4Long = `医療費と介護費の両方がかかっています。\n\n`;
+      phase4Long += `親の状況：${parentStatus}、${situationText}\n\n`;
+      phase4Long += `<strong>高額医療・高額介護合算療養費</strong>の対象になる可能性があるか確認したいです。\n`;
+      phase4Long += `・申請先\n`;
+      phase4Long += `・必要書類\n`;
+      phase4Long += `・対象期間\n`;
+      phase4Long += `・過去分の申請漏れの確認\n\n`;
+      phase4Long += `を教えてください。`;
+    }
+
+    // ===========================================
+    // フェーズ5：税務課・税務署
+    // ===========================================
+    const phase5Show = (kaigo === '1-2' || kaigo === '3-4' || kaigo === '5');
+    let phase5Why = '';
+    let phase5Short = '';
+    let phase5Long = '';
+
+    if (phase5Show) {
+      phase5Why = `要介護認定があれば、身体障害者手帳がなくても<strong>障害者控除対象者認定書</strong>の対象になる場合があります（市町村長等の認定が必要）。あわせて<strong>紙おむつ代の医療費控除</strong>も確認しましょう。過去5年分まで遡って申告できる場合があります。`;
+      phase5Short = `「親が要介護認定を受けています。<strong>障害者控除対象者認定書</strong>の対象になるか、また<strong>紙おむつ代の医療費控除</strong>の必要書類について教えてください。」`;
+      phase5Long = `親の介護に関する税金の控除について確認したいです。\n\n`;
+      phase5Long += `親の状況：${parentStatus}、${incomeText}\n\n`;
+      phase5Long += `1. <strong>障害者控除対象者認定書</strong>\n`;
+      phase5Long += `親は障害者手帳はありませんが、要介護認定を受けています。\n`;
+      phase5Long += `・申請条件\n・必要書類\n・判定基準\n・申請できる年度\n・過去の年分について確認できるか\n\n`;
+      if (kaigo === '3-4' || kaigo === '5') {
+        phase5Long += `2. <strong>紙おむつ代の医療費控除</strong>\n`;
+        phase5Long += `寝たきりに近い状態で、紙おむつが必要です。\n`;
+        phase5Long += `・おむつ使用証明書、主治医意見書、市区町村の確認書など必要な書類\n`;
+        phase5Long += `・過去年分の遡及申告の可否\n\n`;
+      }
+      phase5Long += `を教えてください。`;
+    }
+
+    // ===========================================
+    // 持ち物チェックリスト
+    // ===========================================
+    const items = [
+      '介護保険被保険者証（親のもの）',
+      '要介護認定の結果通知',
+      '介護保険負担割合証',
+      '直近の介護サービス利用票',
+      '介護サービスの領収書',
+      '医療費の領収書（過去1年分）',
+      '本人確認書類（親と申請者の双方）',
+      '印鑑（認印で可）',
+      'マイナンバーが分かるもの',
+      '振込先が分かる通帳またはキャッシュカード',
+      '親の年金額や所得がわかるもの',
+      '家族構成がわかるメモ',
+      '困っていることを書いたメモ',
+      '聞きたいことリスト'
+    ];
+    if (situation === 'hospital') {
+      items.push('入院していることが分かる書類');
+    }
+    if (kaigo === '3-4' || kaigo === '5') {
+      items.push('おむつの領収書（医療費控除用）');
+    }
+    if (housing === 'planning') {
+      items.push('住宅改修の見積書（事前申請の場合）');
+    }
+    items.push('代理で申請する場合：委任状');
+
+    const checklist = items.map(item => `<span class="checklist-item">☐ ${item}</span>`).join('');
+
+    // ===========================================
+    // 家族LINE共有文
+    // ===========================================
+    let family = `親の介護費や使える制度について、役所と地域包括支援センターに確認しようと思っています。\n\n`;
+    family += `確認するのは、介護保険サービスだけでなく、医療費・税金・自治体独自の助成も含めます。\n\n`;
+    family += `まず<strong>地域包括支援センター</strong>で全体を整理して、その後に必要な窓口へ行く予定です。\n\n`;
+    family += `役所に行く前に、以下をわかる範囲で教えてください。\n`;
+    family += `・親の毎月の医療費\n`;
+    family += `・介護サービスの利用状況\n`;
+    family += `・領収書の有無\n`;
+    family += `・年金や所得がわかる書類\n`;
+    family += `・今いちばん困っていること`;
+
+    return {
+      phase1: { short: phase1Short, long: phase1Long },
+      phase2: { show: phase2Show, why: phase2Why, short: phase2Short, long: phase2Long },
+      phase3: { short: phase3Short, long: phase3Long },
+      phase4: { show: phase4Show, why: phase4Why, short: phase4Short, long: phase4Long },
+      phase5: { show: phase5Show, why: phase5Why, short: phase5Short, long: phase5Long },
+      checklist: checklist,
+      family: family
+    };
+  }
+
+  // ── PDFダウンロード ──
+  async function downloadPDF() {
+    const btn = document.getElementById('pdf-btn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ PDFを作成中...';
+
+    try {
+      const data = window._diagnosisData;
+      if (!data) throw new Error('診断データが見つかりません');
+
+      const { jsPDF } = window.jspdf;
+
+      const today = new Date();
+      const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+
+      // ── 制度リストHTML ──
+      let seidoListHTML = '';
+      data.seidos.forEach((s, i) => {
+        seidoListHTML += `
+          <div style="margin-bottom: 12px; padding: 10px 12px; background: #F8F8F8; border-left: 4px solid #1F4F4F; border-radius: 4px;">
+            <div style="font-size: 13px; font-weight: 700; color: #2A2A2A; margin-bottom: 4px;">
+              ${i + 1}. ${s.name}
+            </div>
+            <div style="font-size: 11px; color: #555; line-height: 1.7; margin-bottom: 4px;">${s.desc}</div>
+            <div style="font-size: 11px; font-weight: 700; color: #C97C00;">→ ${s.amount}</div>
+          </div>
+        `;
+      });
+
+      // ── フェーズHTML生成関数 ──
+      const buildPhaseHTML = (num, title, why, short, long) => `
+        <div style="border: 1px solid #DDD; border-radius: 6px; padding: 14px;">
+          <div style="display: inline-block; background: #D4A23A; color: #FFF; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; margin-bottom: 6px;">
+            STEP ${num}
+          </div>
+          <div style="font-size: 14px; font-weight: 700; color: #2A2A2A; margin-bottom: 8px;">
+            ${title}
+          </div>
+          <div style="font-size: 11px; color: #555; line-height: 1.8; margin-bottom: 10px; padding: 8px 10px; background: #F8F8F8; border-radius: 4px;">
+            ${why}
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #1F4F4F; margin-bottom: 4px;">▼ 短い版</div>
+          <div style="background: #FFF8E5; border-left: 3px solid #D4A23A; padding: 10px 12px; border-radius: 4px; font-size: 11px; line-height: 1.9; margin-bottom: 8px;">
+            ${short}
+          </div>
+          <div style="font-size: 11px; font-weight: 700; color: #1F4F4F; margin-bottom: 4px;">▼ 詳しい版</div>
+          <div style="background: #FFF8E5; border-left: 3px solid #D4A23A; padding: 10px 12px; border-radius: 4px; font-size: 10.5px; line-height: 1.9; white-space: pre-wrap;">${long}</div>
+        </div>
+      `;
+
+      // ── PDFに含めるブロックの配列を構築 ──
+      // 各ブロックは {html, breakBefore} の形式
+      // breakBefore=true なら、このブロックの前で必ず改ページする
+      const blocks = [];
+
+      // ヘッダー（1ページ目の冒頭・改ページなし）
+      blocks.push({
+        breakBefore: false,
+        html: `
+          <div style="border-bottom: 3px solid #B8862A; padding-bottom: 16px; margin-bottom: 20px;">
+            <div style="display: inline-block; background: linear-gradient(135deg, #D4A23A, #B8862A); color: #0F3535; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; padding: 4px 12px; border-radius: 3px; margin-bottom: 10px;">
+              ✦ note特典専用 ／ 完全版 ✦
+            </div>
+            <div style="font-size: 11px; color: #888; letter-spacing: 0.1em;">介護で使える制度のセルフ診断</div>
+            <div style="font-size: 22px; font-weight: 700; color: #1F4F4F; margin-top: 6px; font-family: serif;">
+              診断結果と窓口めぐりガイド
+            </div>
+            <div style="font-size: 10px; color: #888; margin-top: 6px;">作成日：${dateStr}</div>
+          </div>
+        `
+      });
+
+      // 取りこぼし金額
+      blocks.push({
+        breakBefore: false,
+        html: `
+          <div style="background: linear-gradient(135deg, #1F4F4F, #0F3535); color: #FFF; padding: 18px 24px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 10px; color: #AADDDD; letter-spacing: 0.1em; margin-bottom: 4px;">取りこぼしている可能性のある金額</div>
+            <div style="font-size: 30px; font-weight: 700; color: #D4A23A; font-family: serif;">
+              年間 ${data.minAmt} 万円〜
+            </div>
+            <div style="font-size: 10px; color: #AADDDD; margin-top: 4px;">
+              ${data.seidos.length}つの制度を取りこぼしている可能性があります
+            </div>
+          </div>
+        `
+      });
+
+      // 申請すべき制度
+      blocks.push({
+        breakBefore: false,
+        html: `
+          <div style="margin-bottom: 22px;">
+            <div style="font-size: 13px; font-weight: 700; color: #1F4F4F; padding: 8px 12px; background: #E8F0F0; border-radius: 4px; margin-bottom: 10px;">
+              ■ 申請をおすすめする制度
+            </div>
+            ${seidoListHTML}
+          </div>
+        `
+      });
+
+      // 大事なメッセージ
+      blocks.push({
+        breakBefore: false,
+        html: `
+          <div style="background: #FFF0DB; border: 1px solid #C97C00; padding: 14px 16px; border-radius: 6px; margin-bottom: 22px;">
+            <div style="font-size: 13px; font-weight: 700; color: #C97C00; margin-bottom: 6px;">📌 大事なこと：制度を全部覚えなくていい</div>
+            <div style="font-size: 11px; color: #5A2A00; line-height: 1.8;">
+              大事なのは「<strong>どこに、どの順番で、何を聞くか</strong>」です。<br>
+              最初に行くべきは介護保険課ではありません。まず<strong>地域包括支援センター</strong>で全体の交通整理をしてもらってから、必要な窓口へ行くのが最短ルートです。
+            </div>
+          </div>
+        `
+      });
+
+      // 窓口めぐりガイドのセクション見出し
+      blocks.push({
+        breakBefore: true, // ★STEP一覧は新ページから開始
+        html: `
+          <div style="font-size: 14px; font-weight: 700; color: #1F4F4F; padding: 10px 14px; background: #E8F0F0; border-radius: 4px; margin-bottom: 14px;">
+            ■ 窓口めぐりガイド：どこに、どの順番で、何を聞くか
+          </div>
+        `
+      });
+
+      // 各STEP（必ず改ページしてから配置すれば途中で切れない）
+      blocks.push({
+        breakBefore: false, // セクション見出しの直後なので改ページ不要
+        keepWithBreakIfNeeded: true,
+        html: buildPhaseHTML(1, '🏛️ 地域包括支援センターで「全体の整理」をしてもらう',
+          'いきなり役所の窓口を回ると、話が「介護保険サービスの範囲」に閉じやすくなります。まずここで親の状態と家族の困りごとを整理してもらう。',
+          data.scripts.phase1.short, data.scripts.phase1.long)
+      });
+
+      if (data.scripts.phase2.show) {
+        blocks.push({
+          breakBefore: false,
+          keepWithBreakIfNeeded: true,
+          html: buildPhaseHTML(2, '🏢 市区町村の介護保険担当窓口',
+            data.scripts.phase2.why, data.scripts.phase2.short, data.scripts.phase2.long)
+        });
+      }
+
+      blocks.push({
+        breakBefore: false,
+        keepWithBreakIfNeeded: true,
+        html: buildPhaseHTML(3, '🏘️ 高齢福祉課・福祉課（自治体独自の助成）',
+          '紙おむつ支給・配食・見守り・移送・緊急通報装置・家族介護者支援など、自治体独自の制度がある場合があります。制度名を言う前にまとめて聞くのがコツ。',
+          data.scripts.phase3.short, data.scripts.phase3.long)
+      });
+
+      if (data.scripts.phase4.show) {
+        blocks.push({
+          breakBefore: false,
+          keepWithBreakIfNeeded: true,
+          html: buildPhaseHTML(4, '🏥 加入している医療保険の窓口',
+            data.scripts.phase4.why, data.scripts.phase4.short, data.scripts.phase4.long)
+        });
+      }
+
+      if (data.scripts.phase5.show) {
+        blocks.push({
+          breakBefore: false,
+          keepWithBreakIfNeeded: true,
+          html: buildPhaseHTML(5, '📊 税務課・税務署（控除関連）',
+            data.scripts.phase5.why, data.scripts.phase5.short, data.scripts.phase5.long)
+        });
+      }
+
+      // 持ち物
+      blocks.push({
+        breakBefore: true, // ★新ページから
+        html: `
+          <div>
+            <div style="font-size: 14px; font-weight: 700; color: #1F4F4F; padding: 10px 14px; background: #E8F0F0; border-radius: 4px; margin-bottom: 12px;">
+              ▼ 役所めぐりの持ち物チェックリスト
+            </div>
+            <div style="background: #F8F8F8; border-left: 4px solid #C97C00; padding: 14px 16px; border-radius: 4px; font-size: 11px; line-height: 2.0;">
+              ${data.scripts.checklist}
+            </div>
+          </div>
+        `
+      });
+
+      // 家族LINE
+      blocks.push({
+        breakBefore: false,
+        keepWithBreakIfNeeded: true,
+        html: `
+          <div style="margin-top: 22px;">
+            <div style="font-size: 14px; font-weight: 700; color: #1F4F4F; padding: 10px 14px; background: #E8F0F0; border-radius: 4px; margin-bottom: 12px;">
+              ▼ 家族LINEに送る共有文（コピペOK）
+            </div>
+            <div style="background: #F0F8F8; border-left: 4px solid #1F4F4F; padding: 14px 16px; border-radius: 4px; font-size: 11px; line-height: 1.9; white-space: pre-wrap;">${data.scripts.family}</div>
+          </div>
+        `
+      });
+
+      // フッター注釈
+      blocks.push({
+        breakBefore: false,
+        html: `
+          <div style="border-top: 1px solid #DDD; padding-top: 12px; margin-top: 22px; font-size: 9px; color: #888; line-height: 1.7;">
+            ※本診断は目安です。制度の対象条件、申請方法、必要書類、窓口名は、自治体・加入している医療保険・世帯状況・所得状況によって異なります。<br>
+            ※個別の判断は、市区町村、税務署、加入している医療保険者、勤務先、ハローワーク、ケアマネジャー等に必ず確認してください。
+          </div>
+          <div style="margin-top: 18px; padding: 14px 16px; background: linear-gradient(135deg, #0F3535 0%, #1F4F4F 100%); border: 1px solid rgba(212, 162, 58, 0.4); border-radius: 6px; text-align: center;">
+            <div style="width: 50px; height: 1px; background: #D4A23A; margin: 0 auto 10px;"></div>
+            <div style="color: #D4A23A; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; margin-bottom: 6px; font-family: serif;">
+              ✦ note特典専用 ／ 完全版 ✦
+            </div>
+            <div style="color: rgba(255,255,255,0.7); font-size: 9px; line-height: 1.7;">
+              本診断ツールは、有料note『役所に3回行っても「また来てください」と言われた私が、1回で終わらせた方法』ご購入者様限定の特典です。
+            </div>
+          </div>
+        `
+      });
+
+      // ── 各ブロックを個別にcanvas化 ──
+      const blockWidth = 794;        // PDFページ幅相当のpx
+      const sidePadding = 60;        // ページの左右余白(px)
+      const innerWidth = blockWidth - sidePadding * 2;
+
+      const blockCanvases = [];
+      for (let i = 0; i < blocks.length; i++) {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = `
+          position: absolute;
+          left: -9999px;
+          top: 0;
+          width: ${innerWidth}px;
+          padding: 0;
+          background: #FFFFFF;
+          font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+          color: #2A2A2A;
+          line-height: 1.7;
+          box-sizing: content-box;
+        `;
+        wrap.innerHTML = blocks[i].html;
+        document.body.appendChild(wrap);
+
+        const c = await html2canvas(wrap, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#FFFFFF',
+          logging: false
+        });
+        document.body.removeChild(wrap);
+        blockCanvases.push({ canvas: c, meta: blocks[i] });
+      }
+
+      // ── PDF生成：ブロック単位で配置・改ページ制御 ──
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = 210;
+      const pdfHeight = 297;
+      const marginTopBottom = 15;    // 上下余白(mm)
+      const marginLeftRight = 15;    // 左右余白(mm)
+      const usableHeight = pdfHeight - marginTopBottom * 2;
+      const usableWidth = pdfWidth - marginLeftRight * 2;
+
+      let currentY = marginTopBottom;
+
+      for (let i = 0; i < blockCanvases.length; i++) {
+        const { canvas, meta } = blockCanvases[i];
+        // mm単位の高さに換算
+        const mmHeight = (canvas.height * usableWidth) / canvas.width;
+
+        // 必須改ページ
+        if (meta.breakBefore && currentY > marginTopBottom) {
+          pdf.addPage();
+          currentY = marginTopBottom;
+        }
+
+        // このブロックがページに収まらない場合：
+        // - keepWithBreakIfNeeded=true（STEP系）なら、ページ替えして配置
+        // - そうでなくても、半分以上はみ出すなら改ページ
+        if (currentY + mmHeight > pdfHeight - marginTopBottom) {
+          if (meta.keepWithBreakIfNeeded) {
+            // STEPブロックは丸ごと改ページ
+            pdf.addPage();
+            currentY = marginTopBottom;
+
+            // 改ページしてもなお1ページに入りきらないほど大きい場合は、警告のみ（ほぼ起こらない）
+            if (mmHeight > usableHeight) {
+              // 縮小して入れる
+              const scale = usableHeight / mmHeight;
+              const scaledWidth = usableWidth * scale;
+              const scaledHeight = usableHeight;
+              const offsetX = marginLeftRight + (usableWidth - scaledWidth) / 2;
+              const imgData = canvas.toDataURL('image/jpeg', 0.92);
+              pdf.addImage(imgData, 'JPEG', offsetX, currentY, scaledWidth, scaledHeight);
+              currentY += scaledHeight + 4;
+              continue;
+            }
+          } else {
+            // 普通のブロックでも、はみ出すなら次のページへ
+            pdf.addPage();
+            currentY = marginTopBottom;
+          }
+        }
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        pdf.addImage(imgData, 'JPEG', marginLeftRight, currentY, usableWidth, mmHeight);
+        currentY += mmHeight + 4; // ブロック間に少し余白
+      }
+
+      const filename = `介護制度診断結果_${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}.pdf`;
+      pdf.save(filename);
+
+      btn.disabled = false;
+      btn.textContent = '✅ PDFをダウンロードしました';
+      setTimeout(() => { btn.textContent = originalText; }, 2500);
+
+    } catch (e) {
+      console.error('PDF生成エラー:', e);
+      btn.disabled = false;
+      btn.textContent = originalText;
+      alert('PDFの生成に失敗しました。お手数ですが、ページを再読み込みしてもう一度お試しください。');
+    }
   }
 
   function restart() {
